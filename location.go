@@ -5,8 +5,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-
-	"github.com/nikandfor/tlog/low"
+	"sync/atomic"
+	"unsafe"
 )
 
 type (
@@ -18,11 +18,15 @@ type (
 	// It's quiet the same as runtime.CallerFrames but more efficient.
 	PCs []PC
 
+	buf []byte
+
 	locFmtState struct {
-		low.Buf
+		buf
 		flags string
 	}
 )
+
+var spaces = []byte("                                                                                                                                                                ")
 
 // Caller returns information about the calling goroutine's stack. The argument s is the number of frames to ascend, with 0 identifying the caller of Caller.
 //
@@ -40,6 +44,32 @@ func Funcentry(s int) (r PC) {
 	caller1(1+s, &r, 1, 1)
 
 	return r.Entry()
+}
+
+func CallerOnce(s int, pc *PC) (r PC) {
+	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
+
+	if r == 0 {
+		caller1(1+s, &r, 1, 1)
+
+		atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
+	}
+
+	return
+}
+
+func FuncentryOnce(s int, pc *PC) (r PC) {
+	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
+
+	if r == 0 {
+		caller1(1+s, &r, 1, 1)
+
+		r = r.Entry()
+
+		atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
+	}
+
+	return
 }
 
 // Callers returns callers stack trace.
@@ -123,7 +153,7 @@ func (l PC) Format(s fmt.State, c rune) {
 	if ok {
 		p := w - len(nn) - n
 		if p > 0 {
-			s.Write(low.Spaces[:p])
+			s.Write(spaces[:p])
 		}
 	}
 
@@ -143,11 +173,11 @@ func (l PC) Format(s fmt.State, c rune) {
 // Works only in the same binary where Caller of Funcentry was called.
 // Or if PC.SetCache was called.
 func (t PCs) String() string {
-	var b []byte
+	var b buf
 	for _, l := range t {
 		n, f, l := l.NameFileLine()
 		n = path.Base(n)
-		b = low.AppendPrintf(b, "%-60s  at %s:%d\n", n, f, l)
+		_, _ = fmt.Fprintf(&b, "%-60s  at %s:%d\n", n, f, l)
 	}
 	return string(b)
 }
@@ -161,7 +191,7 @@ func (t PCs) FormatString(flags string) string {
 
 	t.Format(&s, 'v')
 
-	return string(s.Buf)
+	return string(s.buf)
 }
 
 func (t PCs) Format(s fmt.State, c rune) {
@@ -208,6 +238,12 @@ func (s *locFmtState) Flag(c int) bool {
 	}
 
 	return false
+}
+
+func (b *buf) Write(p []byte) (int, error) {
+	*b = append(*b, p...)
+
+	return len(p), nil
 }
 
 func (s *locFmtState) Width() (int, bool)     { return 0, false }
