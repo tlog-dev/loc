@@ -135,6 +135,13 @@ func (l PC) SetCache(name, file string, line int) {
 	locmu.Unlock()
 }
 
+func (l PC) Cached() (ok bool) {
+	locmu.Lock()
+	_, ok = locc[l]
+	locmu.Unlock()
+	return
+}
+
 //go:linkname findfunc runtime.findfunc
 func findfunc(pc PC) funcInfo
 
