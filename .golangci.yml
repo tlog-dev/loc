@@ -1,0 +1,59 @@
+run:
+  #modules-download-mode: readonly
+linters-settings:
+  govet:
+    check-shadowing: false
+  gocognit:
+    min-complexity: 30
+  cyclop:
+    max-complexity: 30
+  fieldalignment:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  depguard:
+    list-type: whitelist
+    packages:
+      - github.com/stretchr/testify
+  misspell:
+  lll:
+    line-length: 170
+  goimports:
+    local-prefixes: github.com/nikandfor/loc
+  prealloc:
+    simple: true
+    for-loops: true
+  gocritic:
+    enabled-tags:
+      - experimental
+      - performance
+      - style
+    disabled-checks:
+      - appendAssign
+      - builtinShadow
+      - commentedOutCode
+      - unnamedResult
+      - whyNoLint
+      - yodaStyleExpr
+      - octalLiteral
+
+linters:
+  enable-all: true
+  disable:
+    - exhaustive
+    - funlen
+    - gci
+    - gochecknoglobals
+    - gochecknoinits
+    - godox
+    - goerr113
+    - gomnd
+    - nakedret
+    - nlreturn
+    - prealloc
+    - testpackage
+    - unparam
+    - wsl

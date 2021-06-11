@@ -42,7 +42,7 @@ func callers(skip int, pc []PC) int
 
 //go:noescape
 //go:linkname caller1 runtime.callers
-func caller1(skip int, pc *PC, len, cap int) int
+func caller1(skip int, pc *PC, len, cap int) int //nolint:predeclared
 
 // NameFileLine returns function name, file and line number for location.
 //
@@ -83,14 +83,15 @@ func (l PC) nameFileLine() (name, file string, line int) {
 	if funcInfo.entry == nil {
 		return
 	}
-	entry := *funcInfo.entry
-	if uintptr(l) > entry {
+
+	if uintptr(l) > *funcInfo.entry {
 		// We store the pc of the start of the instruction following
 		// the instruction in question (the call or the inline mark).
 		// This is done for historical reasons, and to make FuncForPC
 		// work correctly for entries in the result of runtime.Callers.
 		l--
 	}
+
 	name = funcname(funcInfo)
 	file, line32 := funcline1(funcInfo, l, false)
 	line = int(line32)
@@ -110,7 +111,7 @@ func (l PC) nameFileLine() (name, file string, line int) {
 	return
 }
 
-// Entry is functions entry point.
+// FuncEntry is functions entry point.
 func (l PC) FuncEntry() PC {
 	funcInfo := findfunc(l)
 	if funcInfo.entry == nil {

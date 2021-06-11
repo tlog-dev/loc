@@ -15,7 +15,7 @@ type (
 	}
 )
 
-var spaces = []byte("                                                                                                                                                                ")
+var spaces = []byte("                                                                                                                                                                ") //nolint:lll
 
 // String formats PC as base_name.go:line.
 //
@@ -227,7 +227,7 @@ func (t PCs) String() string {
 	return string(b)
 }
 
-// StringFlags formats PCs as list of type_name (file.go:line)
+// FormatString formats PCs as list of type_name (file.go:line)
 //
 // Works only in the same binary where Caller of Funcentry was called.
 // Or if PC.SetCache was called.

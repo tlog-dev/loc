@@ -10,6 +10,7 @@ type (
 	// It is embedded in other struct types.
 	//
 	// rtype must be kept in sync with ../runtime/type.go:/^type._type.
+	//nolint:structcheck,unused
 	rtype struct {
 		size       uintptr
 		ptrdata    uintptr // number of bytes in the type that can contain pointers
@@ -32,6 +33,7 @@ type (
 	}
 )
 
+//nolint:deadcode,varcheck
 const (
 	kindDirectIface = 1 << 5
 	kindGCProg      = 1 << 6 // Type.gc points to GC program

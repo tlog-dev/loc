@@ -12,6 +12,8 @@ import (
 )
 
 func TestRuntimeCaller(t *testing.T) {
+	t.Parallel()
+
 	rpc, rfile, rline, ok := runtime.Caller(0)
 
 	pc := Caller(0)
@@ -32,6 +34,8 @@ func TestRuntimeCaller(t *testing.T) {
 }
 
 func TestRuntimeCallers(t *testing.T) {
+	t.Parallel()
+
 	var rpcs [2]uintptr
 	n := runtime.Callers(1, rpcs[:])
 

@@ -9,7 +9,7 @@ import (
 	"unsafe"
 )
 
-func stack(p uintptr, fa int) {
+func stack(p uintptr, fa int) { //nolint:deadcode,unused
 	st := -14 * 0x10
 	f := 14 * 0x10
 
@@ -36,14 +36,16 @@ func stack(p uintptr, fa int) {
 		p1 := unsafe.Pointer(p + uintptr(x+8))
 
 		var v0, v1 uintptr
-		v0 = *(*uintptr)(unsafe.Pointer(p0))
-		v1 = *(*uintptr)(unsafe.Pointer(p1))
+		v0 = *(*uintptr)(p0)
+		v1 = *(*uintptr)(p1)
 
 		println(fmt.Sprintf("%x %16x %16x%s", p0, v0, v1, l))
 	}
 }
 
 func TestFastCaller(t *testing.T) {
+	t.Parallel()
+
 	for i := 0; i < 6; i++ {
 		pc := f1(i, 0x999)
 		f := runtime.FuncForPC(pc)
@@ -59,6 +61,8 @@ func TestFastCaller(t *testing.T) {
 }
 
 func TestFastFuncentry(t *testing.T) {
+	t.Parallel()
+
 	for i := 0; i < 6; i++ {
 		pc := e1(i, 0x999)
 		f := runtime.FuncForPC(pc)
@@ -74,66 +78,28 @@ func TestFastFuncentry(t *testing.T) {
 }
 
 //go:noinline
-func f0(t *testing.T) {
-	//	defer stack(uintptr(unsafe.Pointer(&t)), 0x111)
-	//	pc := f1(0, 0x10)
-
-	//	t.Logf("pc %x  caller %x", pc, Caller2(0))
-
-	pc := uintptr(FastCaller(1))
-
-	c := Caller(1)
-	t.Logf("caller: %x  %v", uintptr(c), c)
-
-	f := runtime.FuncForPC(pc)
-
-	t.Logf("FastCaller SP %x", fastCallerSP)
-	t.Logf("pc %x  func: %v", pc, f.Name())
-}
-
-//go:noinline
-func f1(s int, x int) (c uintptr) {
+func f1(s, x int) (c uintptr) {
 	//	defer stack(uintptr(unsafe.Pointer(&c)), s)
 
 	return f2(s, x+1)
 }
 
 //go:noinline
-func f2(s int, x int) (c uintptr) {
+func f2(s, x int) (c uintptr) {
 	//	defer stack(uintptr(unsafe.Pointer(&c)), s)
 
 	return uintptr(FastCaller(s))
 }
 
 //go:noinline
-func e1(s int, x int) (c uintptr) {
+func e1(s, x int) (c uintptr) {
 	return e2(s, x+1)
 }
 
 //go:noinline
-func e2(s int, x int) (c uintptr) {
+func e2(s, x int) (c uintptr) {
 	return uintptr(FastFuncentry(s))
 }
-
-var (
-	stackdumpOff uintptr
-	stackdump    [100]uintptr
-	stackdumpSt  int
-	stackdumpF   int
-	stackdumpX   int
-
-	stp0, stp1 unsafe.Pointer
-	stv0, stv1 uintptr
-
-	stl string
-
-	fastCallerSP uintptr
-)
-
-////go:noinline
-//func FastCaller(s int) (c uintptr) {
-//	return uintptr(fastCaller(s))
-//}
 
 func Caller2(s int) (r uintptr) {
 	caller2(1+s, &r, 1, 1)
@@ -143,12 +109,7 @@ func Caller2(s int) (r uintptr) {
 
 //go:noescape
 //go:linkname caller2 runtime.callers
-func caller2(skip int, pc *uintptr, len, cap int) int
-
-//go:nosplit
-func add(p, x uintptr) unsafe.Pointer {
-	return unsafe.Pointer(uintptr(p) + x)
-}
+func caller2(skip int, pc *uintptr, len, cap int) int //nolint:predeclared
 
 func Benchmark3FastCaller(b *testing.B) {
 	b.ReportAllocs()

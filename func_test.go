@@ -9,11 +9,13 @@ import (
 )
 
 type eface struct {
-	t unsafe.Pointer
-	d unsafe.Pointer
+	_ unsafe.Pointer
+	_ unsafe.Pointer
 }
 
 func TestFuncFunc(t *testing.T) {
+	t.Parallel()
+
 	var f interface{}
 
 	f = TestSetCache
