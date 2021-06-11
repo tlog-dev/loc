@@ -19,7 +19,7 @@ func FastCaller(s int) (r PC) {
 func FastFuncentry(s int) (r PC) {
 	r = fastCaller(s)
 
-	return r.Entry()
+	return r.FuncEntry()
 }
 
 func fastCaller(s int) (c PC)

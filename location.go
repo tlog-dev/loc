@@ -32,7 +32,7 @@ func Caller(s int) (r PC) {
 func Funcentry(s int) (r PC) {
 	caller1(1+s, &r, 1, 1)
 
-	return r.Entry()
+	return r.FuncEntry()
 }
 
 func CallerOnce(s int, pc *PC) (r PC) {
@@ -55,7 +55,7 @@ func FuncentryOnce(s int, pc *PC) (r PC) {
 	if r == 0 {
 		caller1(1+s, &r, 1, 1)
 
-		r = r.Entry()
+		r = r.FuncEntry()
 
 		atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
 	}

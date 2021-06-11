@@ -150,7 +150,19 @@ func add(p, x uintptr) unsafe.Pointer {
 	return unsafe.Pointer(uintptr(p) + x)
 }
 
-func BenchmarkRuntimeCaller(b *testing.B) {
+func Benchmark3FastCaller(b *testing.B) {
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		func() {
+			func() {
+				_ = FastCaller(3)
+			}()
+		}()
+	}
+}
+
+func Benchmark3Caller(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
@@ -162,13 +174,13 @@ func BenchmarkRuntimeCaller(b *testing.B) {
 	}
 }
 
-func BenchmarkFastCaller(b *testing.B) {
+func Benchmark3RuntimeCaller(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
 		func() {
 			func() {
-				_ = FastCaller(3)
+				_, _, _, _ = runtime.Caller(3)
 			}()
 		}()
 	}

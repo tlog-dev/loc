@@ -22,7 +22,7 @@ func testLocation3(t *testing.T) {
 func TestLocationZero(t *testing.T) {
 	var l PC
 
-	entry := l.Entry()
+	entry := l.FuncEntry()
 	assert.Equal(t, PC(0), entry)
 
 	name, file, line := l.NameFileLine()

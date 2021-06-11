@@ -111,7 +111,7 @@ func (l PC) nameFileLine() (name, file string, line int) {
 }
 
 // Entry is functions entry point.
-func (l PC) Entry() PC {
+func (l PC) FuncEntry() PC {
 	funcInfo := findfunc(l)
 	if funcInfo.entry == nil {
 		return 0
