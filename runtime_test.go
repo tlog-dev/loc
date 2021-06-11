@@ -106,3 +106,7 @@ func BenchmarkRuntimeCallerFileLine(b *testing.B) {
 		b.Errorf("not ok")
 	}
 }
+
+func gover() string {
+	return runtime.Version()
+}
