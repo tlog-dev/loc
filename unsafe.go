@@ -121,7 +121,7 @@ func (l PC) Entry() PC {
 
 // SetCache sets name, file and line for the PC.
 // It allows to work with PC in another binary the same as in original.
-func (l PC) SetCache(name, file string, line int) {
+func SetCache(l PC, name, file string, line int) {
 	locmu.Lock()
 	if name == "" && file == "" {
 		delete(locc, l)
@@ -135,7 +135,7 @@ func (l PC) SetCache(name, file string, line int) {
 	locmu.Unlock()
 }
 
-func (l PC) Cached() (ok bool) {
+func Cached(l PC) (ok bool) {
 	locmu.Lock()
 	_, ok = locc[l]
 	locmu.Unlock()
@@ -159,7 +159,3 @@ func pcdatavalue(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer) int
 
 //go:linkname funcnameFromNameoff runtime.funcnameFromNameoff
 func funcnameFromNameoff(f funcInfo, nameoff int32) string
-
-func bytesToString(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
-}

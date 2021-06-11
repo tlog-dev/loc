@@ -1,11 +1,8 @@
 package loc
 
 import (
-	"bytes"
-	"fmt"
 	"path"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,12 +17,12 @@ func testLocationInside(t *testing.T) {
 	name, file, line := pc.NameFileLine()
 	assert.Equal(t, "loc.testLocationInside", path.Base(name))
 	assert.Equal(t, "location_test.go", filepath.Base(file))
-	assert.Equal(t, 19, line)
+	assert.Equal(t, 16, line)
 }
 
 func TestLocationShort(t *testing.T) {
 	pc := Caller(0)
-	assert.Equal(t, "location_test.go:27", pc.String())
+	assert.Equal(t, "location_test.go:24", pc.String())
 }
 
 func TestLocation2(t *testing.T) {
@@ -33,38 +30,36 @@ func TestLocation2(t *testing.T) {
 		func() {
 			l := Funcentry(0)
 
-			assert.Equal(t, "location_test.go:33", l.String())
+			assert.Equal(t, "location_test.go:30", l.String())
 		}()
 	}()
 }
 
-func TestLocationFormat(t *testing.T) {
-	l := Caller(-1)
+func TestLocationOnce(t *testing.T) {
+	var pc PC
 
-	var b bytes.Buffer
+	CallerOnce(-1, &pc)
+	assert.Equal(t, "location.go:44", pc.String())
 
-	fmt.Fprintf(&b, "%v", l)
-	assert.Equal(t, "location.go:31", b.String())
+	pc++
+	save := pc
 
-	b.Reset()
+	CallerOnce(-1, &pc)
 
-	fmt.Fprintf(&b, "%.3v", l)
-	assert.Equal(t, "location.go: 31", b.String())
+	assert.Equal(t, save, pc) // not changed
 
-	b.Reset()
+	//
+	pc = 0
 
-	fmt.Fprintf(&b, "%18.3v", l)
-	assert.Equal(t, "location.go   : 31", b.String())
+	FuncentryOnce(-1, &pc)
+	assert.Equal(t, "location.go:52", pc.String())
 
-	b.Reset()
+	pc++
+	save = pc
 
-	fmt.Fprintf(&b, "%+v", l)
-	assert.True(t, regexp.MustCompile(`[\w./-]*location.go:31`).MatchString(b.String()))
+	FuncentryOnce(-1, &pc)
 
-	b.Reset()
-
-	fmt.Fprintf(&b, "%#v", l)
-	assert.Equal(t, "Caller:31", b.String())
+	assert.Equal(t, save, pc) // not changed
 }
 
 func TestLocationCropFileName(t *testing.T) {
@@ -91,21 +86,19 @@ func TestCaller(t *testing.T) {
 func TestSetCache(t *testing.T) {
 	l := PC(0x1234567890)
 
-	l.SetCache("", "", 0)
+	assert.False(t, Cached(l))
+
+	SetCache(l, "", "", 0)
+
+	assert.False(t, Cached(l))
 
 	assert.NotEqual(t, "file.go:10", l.String())
 
-	l.SetCache("Name", "file.go", 10)
+	SetCache(l, "Name", "file.go", 10)
+
+	assert.True(t, Cached(l))
 
 	assert.Equal(t, "file.go:10", l.String())
-}
-
-func BenchmarkLocationString(b *testing.B) {
-	b.ReportAllocs()
-
-	for i := 0; i < b.N; i++ {
-		_ = Caller(0).String()
-	}
 }
 
 func BenchmarkLocationCaller(b *testing.B) {

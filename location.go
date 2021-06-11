@@ -1,8 +1,6 @@
 package loc
 
 import (
-	"fmt"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync/atomic"
@@ -17,16 +15,7 @@ type (
 	// PCs is a stack trace.
 	// It's quiet the same as runtime.CallerFrames but more efficient.
 	PCs []PC
-
-	buf []byte
-
-	locFmtState struct {
-		buf
-		flags string
-	}
 )
-
-var spaces = []byte("                                                                                                                                                                ")
 
 // Caller returns information about the calling goroutine's stack. The argument s is the number of frames to ascend, with 0 identifying the caller of Caller.
 //
@@ -48,6 +37,8 @@ func Funcentry(s int) (r PC) {
 
 func CallerOnce(s int, pc *PC) (r PC) {
 	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
+
+	// TODO: may be mutex to prevent concurrention?
 
 	if r == 0 {
 		caller1(1+s, &r, 1, 1)
@@ -89,129 +80,6 @@ func CallersFill(skip int, tr PCs) PCs {
 	return tr[:n]
 }
 
-// String formats PC as base_name.go:line.
-//
-// Works only in the same binary where Caller of Funcentry was called.
-// Or if PC.SetCache was called.
-func (l PC) String() string {
-	_, file, line := l.NameFileLine()
-	file = filepath.Base(file)
-
-	b := []byte(file)
-	i := len(b)
-	b = append(b, ":        "...)
-
-	n := 1
-	for q := line; q != 0; q /= 10 {
-		n++
-	}
-
-	b = b[:i+n]
-
-	for q, j := line, n-1; j >= 1; j-- {
-		b[i+j] = byte(q%10) + '0'
-		q /= 10
-	}
-
-	return string(b)
-}
-
-// Format is fmt.Formatter interface implementation.
-// It supports width. Precision sets line number width. '+' prints full path not base.
-func (l PC) Format(s fmt.State, c rune) {
-	name, file, line := l.NameFileLine()
-
-	nn := file
-
-	if s.Flag('#') {
-		nn = name
-	}
-
-	if !s.Flag('+') {
-		nn = filepath.Base(nn)
-		if s.Flag('#') && !s.Flag('-') {
-			p := strings.IndexByte(nn, '.')
-			nn = nn[p+1:]
-		}
-	}
-
-	n := 1
-	for q := line; q != 0; q /= 10 {
-		n++
-	}
-
-	p, ok := s.Precision()
-
-	if ok {
-		n = 1 + p
-	}
-
-	s.Write([]byte(nn))
-
-	w, ok := s.Width()
-
-	if ok {
-		p := w - len(nn) - n
-		if p > 0 {
-			s.Write(spaces[:p])
-		}
-	}
-
-	var b [20]byte
-	copy(b[:], ":                  ")
-
-	for q, j := line, n-1; q != 0 && j >= 1; j-- {
-		b[j] = byte(q%10) + '0'
-		q /= 10
-	}
-
-	s.Write(b[:n])
-}
-
-// String formats PCs as list of type_name (file.go:line)
-//
-// Works only in the same binary where Caller of Funcentry was called.
-// Or if PC.SetCache was called.
-func (t PCs) String() string {
-	var b buf
-	for _, l := range t {
-		n, f, l := l.NameFileLine()
-		n = path.Base(n)
-		_, _ = fmt.Fprintf(&b, "%-60s  at %s:%d\n", n, f, l)
-	}
-	return string(b)
-}
-
-// StringFlags formats PCs as list of type_name (file.go:line)
-//
-// Works only in the same binary where Caller of Funcentry was called.
-// Or if PC.SetCache was called.
-func (t PCs) FormatString(flags string) string {
-	s := locFmtState{flags: flags}
-
-	t.Format(&s, 'v')
-
-	return string(s.buf)
-}
-
-func (t PCs) Format(s fmt.State, c rune) {
-	switch {
-	case s.Flag('+'):
-		for _, l := range t {
-			s.Write([]byte("at "))
-			l.Format(s, c)
-			s.Write([]byte("\n"))
-		}
-	default:
-		for i, l := range t {
-			if i != 0 {
-				s.Write([]byte(" at "))
-			}
-			l.Format(s, c)
-		}
-	}
-}
-
 func cropFilename(fn, tp string) string {
 	p := strings.LastIndexByte(tp, '/')
 	pp := strings.IndexByte(tp[p+1:], '.')
@@ -229,22 +97,3 @@ again:
 	tp = tp[p+1:]
 	goto again
 }
-
-func (s *locFmtState) Flag(c int) bool {
-	for _, f := range s.flags {
-		if f == rune(c) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (b *buf) Write(p []byte) (int, error) {
-	*b = append(*b, p...)
-
-	return len(p), nil
-}
-
-func (s *locFmtState) Width() (int, bool)     { return 0, false }
-func (s *locFmtState) Precision() (int, bool) { return 0, false }
