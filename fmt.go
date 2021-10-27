@@ -73,6 +73,10 @@ func (l PC) formatV(s fmt.State) {
 		prec = w2
 	}
 
+	if prec > 20 {
+		prec = 20
+	}
+
 	w, ok := s.Width()
 	if !ok {
 		w = len(file) + 1 + prec
@@ -81,7 +85,8 @@ func (l PC) formatV(s fmt.State) {
 	w -= 1 + prec
 
 	var bufdata [128]byte
-	buf := bufdata[:0]
+	//	buf := bufdata[:0]
+	buf := noescapeSlize(&bufdata)
 
 	if w > len(file) && s.Flag('-') {
 		buf = append(buf, spaces[:w-len(file)]...)
@@ -99,7 +104,7 @@ func (l PC) formatV(s fmt.State) {
 	}
 
 	w2 = len(buf) // reuse var
-	buf = append(buf, ":        "[:1+prec]...)
+	buf = append(buf, ":                    "[:1+prec]...)
 
 	for q, j := line, prec; q != 0 && j >= 1; j-- {
 		buf[w2+j] = byte(q%10) + '0'
@@ -122,8 +127,9 @@ func (l PC) formatName(s fmt.State) {
 	}
 
 	var bufdata [128]byte
+	buf := noescapeSlize(&bufdata)
 
-	buf := l.appendStr(bufdata[:0], s, w, name)
+	buf = l.appendStr(buf, s, w, name)
 
 	_, _ = s.Write(buf)
 }
@@ -141,8 +147,9 @@ func (l PC) formatFile(s fmt.State) {
 	}
 
 	var bufdata [128]byte
+	buf := noescapeSlize(&bufdata)
 
-	buf := l.appendStr(bufdata[:0], s, w, file)
+	buf = l.appendStr(buf, s, w, file)
 
 	_, _ = s.Write(buf)
 }
@@ -175,8 +182,14 @@ func (l PC) formatLine(s fmt.State) {
 		w = lineW
 	}
 
+	if w > 20 {
+		w = 20
+	}
+
 	var bufdata [128]byte
-	buf := append(bufdata[:0], "        "[:w]...)
+	buf := noescapeSlize(&bufdata)
+
+	buf = append(buf, "                    "[:w]...)
 
 	for q, j := line, w-1; q != 0 && j >= 0; j-- {
 		buf[j] = byte(q%10) + '0'

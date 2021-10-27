@@ -37,28 +37,28 @@ func Funcentry(s int) (r PC) {
 
 func CallerOnce(s int, pc *PC) (r PC) {
 	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
-
-	// TODO: may be mutex to prevent concurrention?
-
-	if r == 0 {
-		caller1(1+s, &r, 1, 1)
-
-		atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
+	if r != 0 {
+		return
 	}
+
+	caller1(1+s, &r, 1, 1)
+
+	atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
 
 	return
 }
 
 func FuncentryOnce(s int, pc *PC) (r PC) {
 	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
-
-	if r == 0 {
-		caller1(1+s, &r, 1, 1)
-
-		r = r.FuncEntry()
-
-		atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
+	if r != 0 {
+		return
 	}
+
+	caller1(1+s, &r, 1, 1)
+
+	r = r.FuncEntry()
+
+	atomic.StoreUintptr((*uintptr)(unsafe.Pointer(pc)), uintptr(r))
 
 	return
 }
@@ -85,15 +85,16 @@ func cropFilename(fn, tp string) string {
 	pp := strings.IndexByte(tp[p+1:], '.')
 	tp = tp[:p+pp]
 
-again:
-	if p = strings.Index(fn, tp); p != -1 {
-		return fn[p:]
-	}
+	for {
+		if p = strings.Index(fn, tp); p != -1 {
+			return fn[p:]
+		}
 
-	p = strings.IndexByte(tp, '/')
-	if p == -1 {
-		return filepath.Base(fn)
+		p = strings.IndexByte(tp, '/')
+		if p == -1 {
+			return filepath.Base(fn)
+		}
+
+		tp = tp[p+1:]
 	}
-	tp = tp[p+1:]
-	goto again
 }

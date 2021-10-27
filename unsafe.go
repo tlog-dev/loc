@@ -1,6 +1,7 @@
 package loc
 
 import (
+	"reflect"
 	"sync"
 	"unsafe"
 )
@@ -108,4 +109,11 @@ func Cached(l PC) (ok bool) {
 	_, ok = locc[l]
 	locmu.Unlock()
 	return
+}
+
+func noescapeSlize(b *[128]byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: uintptr(unsafe.Pointer(&b[0])),
+		Cap:  128,
+	}))
 }

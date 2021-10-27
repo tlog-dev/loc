@@ -62,7 +62,7 @@ func TestLocationOnce(t *testing.T) {
 	pc = 0
 
 	FuncentryOnce(-1, &pc)
-	assert.Equal(t, "location.go:52", pc.String())
+	assert.Equal(t, "location.go:51", pc.String())
 
 	pc++
 	save = pc
