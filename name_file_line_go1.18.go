@@ -1,5 +1,5 @@
-//go:build go1.17 && !go1.18
-// +build go1.17,!go1.18
+//go:build go1.18
+// +build go1.18
 
 package loc
 
@@ -15,7 +15,9 @@ func (l PC) nameFileLine() (name, file string, line int) {
 		return
 	}
 
-	if uintptr(l) > *funcInfo.entry {
+	entry := funcInfoEntry(funcInfo)
+
+	if l > entry {
 		// We store the pc of the start of the instruction following
 		// the instruction in question (the call or the inline mark).
 		// This is done for historical reasons, and to make FuncForPC
@@ -60,3 +62,6 @@ func pcdatavalue1(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer, st
 
 //go:linkname funcnameFromNameoff runtime.funcnameFromNameoff
 func funcnameFromNameoff(f funcInfo, nameoff int32) string
+
+//go:linkname funcInfoEntry runtime.funcInfo.entry
+func funcInfoEntry(f funcInfo) PC

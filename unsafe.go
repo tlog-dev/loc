@@ -85,7 +85,7 @@ func (l PC) FuncEntry() PC {
 	if funcInfo.entry == nil {
 		return 0
 	}
-	return PC(*funcInfo.entry)
+	return funcInfoEntry(funcInfo)
 }
 
 // SetCache sets name, file and line for the PC.
