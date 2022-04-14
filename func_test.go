@@ -33,6 +33,9 @@ func TestFuncFunc(t *testing.T) {
 
 	assert.Equal(t, Funcentry(0), PC(reflect.ValueOf(TestFuncFunc).Pointer()))
 
+	name, file, line = FuncentryFromFunc(nil).NameFileLine()
+	t.Logf("pc: %v %v %v", name, file, line)
+
 	var q func()
 
 	name, file, line = FuncentryFromFunc(q).NameFileLine()

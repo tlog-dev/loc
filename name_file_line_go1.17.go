@@ -6,10 +6,6 @@ package loc
 import "unsafe"
 
 func (l PC) nameFileLine() (name, file string, line int) {
-	if l == 0 {
-		return
-	}
-
 	funcInfo := findfunc(l)
 	if funcInfo.entry == nil {
 		return

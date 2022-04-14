@@ -10,7 +10,7 @@
 
 It's a fast, allocfree and convinient version of `runtime.Caller`.
 
-It's born from [tlog](https://github.com/nikandfor/tlog).
+It was born from [tlog](https://github.com/nikandfor/tlog).
 
 ## What is similar
 
