@@ -14,8 +14,6 @@ type eface struct {
 }
 
 func TestFuncFunc(t *testing.T) {
-	t.Parallel()
-
 	var f interface{}
 
 	f = TestSetCache

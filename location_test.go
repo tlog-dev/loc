@@ -9,8 +9,6 @@ import (
 )
 
 func TestLocation(t *testing.T) {
-	t.Parallel()
-
 	testLocationInside(t)
 }
 
@@ -21,31 +19,25 @@ func testLocationInside(t *testing.T) {
 	name, file, line := pc.NameFileLine()
 	assert.Equal(t, "loc.testLocationInside", path.Base(name))
 	assert.Equal(t, "location_test.go", filepath.Base(file))
-	assert.Equal(t, 20, line)
+	assert.Equal(t, 18, line)
 }
 
 func TestLocationShort(t *testing.T) {
-	t.Parallel()
-
 	pc := Caller(0)
-	assert.Equal(t, "location_test.go:30", pc.String())
+	assert.Equal(t, "location_test.go:26", pc.String())
 }
 
 func TestLocation2(t *testing.T) {
-	t.Parallel()
-
 	func() {
 		func() {
 			l := Funcentry(0)
 
-			assert.Equal(t, "location_test.go:38", l.String())
+			assert.Equal(t, "location_test.go:32", l.String())
 		}()
 	}()
 }
 
 func TestLocationOnce(t *testing.T) {
-	t.Parallel()
-
 	var pc PC
 
 	CallerOnce(-1, &pc)
@@ -73,8 +65,6 @@ func TestLocationOnce(t *testing.T) {
 }
 
 func TestLocationCropFileName(t *testing.T) {
-	t.Parallel()
-
 	assert.Equal(t, "github.com/nikandfor/tlog/sub/module/file.go",
 		cropFilename("/path/to/src/github.com/nikandfor/tlog/sub/module/file.go", "github.com/nikandfor/tlog/sub/module.(*type).method"))
 	assert.Equal(t, "github.com/nikandfor/tlog/sub/module/file.go",
@@ -89,8 +79,6 @@ func TestLocationCropFileName(t *testing.T) {
 }
 
 func TestCaller(t *testing.T) {
-	t.Parallel()
-
 	a, b := Caller(0),
 		Caller(0)
 
@@ -98,8 +86,6 @@ func TestCaller(t *testing.T) {
 }
 
 func TestSetCache(t *testing.T) {
-	t.Parallel()
-
 	l := PC(0x1234567890)
 
 	assert.False(t, Cached(l))

@@ -10,8 +10,6 @@ import (
 )
 
 func TestFmt(t *testing.T) {
-	t.Parallel()
-
 	t.Logf("[%d]", 1000)
 	t.Logf("[%6d]", 1000)
 	t.Logf("[%-6d]", 1000)
@@ -20,8 +18,6 @@ func TestFmt(t *testing.T) {
 }
 
 func TestLocationFormat(t *testing.T) {
-	t.Parallel()
-
 	l := Caller(-1)
 
 	name, file, line := l.nameFileLine()
