@@ -92,13 +92,31 @@ func (l PC) FuncEntry() PC {
 // It allows to work with PC in another binary the same as in original.
 func SetCache(l PC, name, file string, line int) {
 	locmu.Lock()
-	if name == "" && file == "" {
+	if name == "" && file == "" && line == 0 {
 		delete(locc, l)
 	} else {
 		locc[l] = nfl{
 			name: name,
 			file: file,
 			line: line,
+		}
+	}
+	locmu.Unlock()
+}
+
+func SetCacheBytes(l PC, name, file []byte, line int) {
+	locmu.Lock()
+	if name == nil && file == nil && line == 0 {
+		delete(locc, l)
+	} else {
+		x := locc[l]
+
+		if x.line != line || string(x.name) != string(name) || string(x.file) != string(file) {
+			locc[l] = nfl{
+				name: string(name),
+				file: string(file),
+				line: line,
+			}
 		}
 	}
 	locmu.Unlock()
