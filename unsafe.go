@@ -129,9 +129,10 @@ func Cached(l PC) (ok bool) {
 	return
 }
 
-func noescapeSlize(b *[128]byte) []byte {
+func noescapeSlize(b *byte, l int) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
-		Data: uintptr(unsafe.Pointer(&b[0])),
-		Cap:  128,
+		Data: uintptr(unsafe.Pointer(b)),
+		Len:  0,
+		Cap:  l,
 	}))
 }

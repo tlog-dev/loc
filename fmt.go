@@ -51,6 +51,8 @@ func (l PC) Format(s fmt.State, c rune) {
 		l.formatFile(s)
 	case 'd', 'l':
 		l.formatLine(s)
+	case 'x', 'X', 'p', 'P':
+		l.formatPC(s, c)
 	}
 }
 
@@ -66,48 +68,39 @@ func (l PC) formatV(s fmt.State) {
 		file = name
 	}
 
-	w2 := width(line)
-
 	prec, ok := s.Precision()
-	if !ok || prec < w2 {
-		prec = w2
+	if lw := width(line); !ok || lw > prec {
+		prec = lw
 	}
 
 	if prec > 20 {
 		prec = 20
 	}
 
-	w, ok := s.Width()
+	width, ok := s.Width()
 	if !ok {
-		w = len(file) + 1 + prec
+		width = len(file) + 1 + prec
 	}
 
-	w -= 1 + prec
+	fwidth := width - 1 - prec
+	if fwidth < 0 {
+		fwidth = 0
+	}
 
 	var bufdata [128]byte
 	//	buf := bufdata[:0]
-	buf := noescapeSlize(&bufdata)
+	buf := noescapeSlize(&bufdata[0], len(bufdata))
 
-	if w > len(file) && s.Flag('-') {
-		buf = append(buf, spaces[:w-len(file)]...)
+	buf = l.appendStr(buf, s, fwidth, file)
+
+	if fwidth+1+prec > width {
+		prec = width - fwidth - 1
 	}
 
-	w2 = w // reuse var
-	if len(file) < w2 {
-		w2 = len(file)
-	}
-
-	buf = append(buf, file[:w2]...)
-
-	if w > len(file) && !s.Flag('-') {
-		buf = append(buf, spaces[:w-len(file)]...)
-	}
-
-	w2 = len(buf) // reuse var
 	buf = append(buf, ":                    "[:1+prec]...)
 
-	for q, j := line, prec; q != 0 && j >= 1; j-- {
-		buf[w2+j] = byte(q%10) + '0'
+	for q, j := line, prec; q != 0 && j >= 0; j-- {
+		buf[fwidth+j] = byte(q%10) + '0'
 		q /= 10
 	}
 
@@ -127,7 +120,7 @@ func (l PC) formatName(s fmt.State) {
 	}
 
 	var bufdata [128]byte
-	buf := noescapeSlize(&bufdata)
+	buf := noescapeSlize(&bufdata[0], len(bufdata))
 
 	buf = l.appendStr(buf, s, w, name)
 
@@ -147,7 +140,7 @@ func (l PC) formatFile(s fmt.State) {
 	}
 
 	var bufdata [128]byte
-	buf := noescapeSlize(&bufdata)
+	buf := noescapeSlize(&bufdata[0], len(bufdata))
 
 	buf = l.appendStr(buf, s, w, file)
 
@@ -186,14 +179,71 @@ func (l PC) formatLine(s fmt.State) {
 		w = 20
 	}
 
-	var bufdata [128]byte
-	buf := noescapeSlize(&bufdata)
+	var bufdata [32]byte
+	buf := noescapeSlize(&bufdata[0], len(bufdata))
 
 	buf = append(buf, "                    "[:w]...)
 
-	for q, j := line, w-1; q != 0 && j >= 0; j-- {
+	j := w - 1
+	for q := line; q != 0 && j >= 0; j-- {
 		buf[j] = byte(q%10) + '0'
 		q /= 10
+	}
+
+	for j >= 1 && s.Flag('0') {
+		buf[j] = '0'
+		j--
+	}
+
+	_, _ = s.Write(buf)
+}
+
+func (l PC) formatPC(s fmt.State, c rune) {
+	lineW := 1
+	for x := l >> 4; x != 0; x >>= 4 {
+		lineW++
+	}
+
+	w, ok := s.Width()
+	if !ok || w < lineW {
+		w = lineW
+	}
+
+	w += len("0x")
+
+	if w > 20 {
+		w = 20
+	}
+
+	var bufdata [32]byte
+	buf := noescapeSlize(&bufdata[0], len(bufdata))
+
+	buf = append(buf, "                    "[:w]...)
+
+	const (
+		hexc = "0123456789abcdef"
+		hexC = "0123456789ABCDEF"
+	)
+
+	hex := hexc
+	if c >= 'A' && c <= 'Z' {
+		hex = hexC
+	}
+
+	j := w - 1
+	for q := uint64(l); q != 0 && j >= 0; j-- {
+		buf[j] = hex[q&0xf]
+		q /= 16
+	}
+
+	for j > 1 && s.Flag('0') {
+		buf[j] = '0'
+		j--
+	}
+
+	if j > 0 {
+		buf[j-1] = '0'
+		buf[j] = 'x'
 	}
 
 	_, _ = s.Write(buf)

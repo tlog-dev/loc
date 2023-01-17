@@ -101,6 +101,24 @@ func TestSetCache(t *testing.T) {
 	assert.True(t, Cached(l))
 
 	assert.Equal(t, "file.go:10", l.String())
+
+	SetCacheBytes(l, []byte("name"), []byte("file"), 11)
+
+	name, file, line := l.NameFileLine()
+	assert.Equal(t, "name", name)
+	assert.Equal(t, "file", file)
+	assert.Equal(t, 11, line)
+
+	SetCacheBytes(l, nil, nil, 12)
+
+	name, file, line = l.NameFileLine()
+	assert.Equal(t, "", name)
+	assert.Equal(t, "", file)
+	assert.Equal(t, 12, line)
+
+	SetCacheBytes(l, nil, nil, 0)
+
+	assert.False(t, Cached(l))
 }
 
 func BenchmarkLocationCaller(b *testing.B) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
+	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,10 +19,10 @@ func TestFmt(t *testing.T) {
 }
 
 func TestLocationFormat(t *testing.T) {
-	l := Caller(-1)
+	l := PC(0x1234cd)
 
-	name, file, line := l.nameFileLine()
-	t.Logf("location: %v %v %v", name, file, line)
+	//	name, file, line := l.nameFileLine()
+	//	t.Logf("location: %v %v %v", name, file, line)
 
 	SetCache(l, "github.com/nikandfor/loc.Caller", "github.com/nikandfor/loc/location.go", 26)
 
@@ -39,6 +40,21 @@ func TestLocationFormat(t *testing.T) {
 
 	fmt.Fprintf(&b, "%18.3v", l)
 	assert.Equal(t, "location.go   : 26", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%18.30v", l)
+	assert.Len(t, b.String(), 18)
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%10.1v", l)
+	assert.Equal(t, "locatio:26", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%18.1v", l)
+	assert.Len(t, b.String(), 18)
 
 	b.Reset()
 
@@ -82,8 +98,38 @@ func TestLocationFormat(t *testing.T) {
 
 	b.Reset()
 
+	fmt.Fprintf(&b, "%0100d", l)
+	assert.Len(t, b.String(), 20)
+
+	b.Reset()
+
 	fmt.Fprintf(&b, "%4l", l)
 	assert.Equal(t, "  26", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%x", l)
+	assert.Equal(t, "0x1234cd", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%8x", l)
+	assert.Equal(t, "  0x1234cd", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%010X", l)
+	assert.Equal(t, "0x00001234CD", b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%010x", l)
+	assert.Equal(t, fmt.Sprintf("%010p", unsafe.Pointer(uintptr(l))), b.String())
+
+	b.Reset()
+
+	fmt.Fprintf(&b, "%100x", l)
+	assert.Len(t, b.String(), 20)
 }
 
 func BenchmarkLocationString(b *testing.B) {
