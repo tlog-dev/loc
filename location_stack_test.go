@@ -91,10 +91,10 @@ at [\w.-/]*location_stack_test.go:74
 }
 
 var addAllSubs = func() string {
-	addAllSubs := ""
-	if regexp.MustCompile("go1.(16|20).*").MatchString(gover()) {
-		addAllSubs = ".1"
+	s := ".1"
+	if regexp.MustCompile("go1.16.*").MatchString(gover()) {
+		s = ""
 	}
 
-	return addAllSubs
+	return s
 }()
