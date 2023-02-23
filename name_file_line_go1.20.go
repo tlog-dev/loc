@@ -1,5 +1,4 @@
-//go:build go1.18 && !go1.20
-// +build go1.18,!go1.20
+//go:build go1.20
 
 package loc
 
@@ -7,7 +6,7 @@ import "unsafe"
 
 func (l PC) nameFileLine() (name, file string, line int) {
 	funcInfo := findfunc(l)
-	if funcInfo.entry == nil {
+	if funcInfo._func == nil {
 		return
 	}
 
@@ -24,14 +23,17 @@ func (l PC) nameFileLine() (name, file string, line int) {
 	name = funcname(funcInfo)
 	file, line32 := funcline1(funcInfo, l, false)
 	line = int(line32)
+
 	if inldata := funcdata(funcInfo, _FUNCDATA_InlTree); inldata != nil {
+		inltree := (*[1 << 20]inlinedCall)(inldata)
+		// Non-strict as cgoTraceback may have added bogus PCs
+		// with a valid funcInfo but invalid PCDATA.
 		ix := pcdatavalue1(funcInfo, _PCDATA_InlTreeIndex, l, nil, false)
 		if ix >= 0 {
-			inltree := (*[1 << 20]inlinedCall)(inldata)
 			// Note: entry is not modified. It always refers to a real frame, not an inlined one.
-			name = funcnameFromNameoff(funcInfo, inltree[ix].func_)
-			// File/line is already correct.
-			// TODO: remove file/line from InlinedCall?
+			ic := inltree[ix]
+			name = funcnameFromNameOff(funcInfo, ic.nameOff)
+			// File/line from funcline1 below are already correct.
 		}
 	}
 
@@ -56,8 +58,8 @@ func pcdatavalue(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer) int
 //go:linkname pcdatavalue1 runtime.pcdatavalue1
 func pcdatavalue1(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer, strict bool) int32
 
-//go:linkname funcnameFromNameoff runtime.funcnameFromNameoff
-func funcnameFromNameoff(f funcInfo, nameoff int32) string
+//go:linkname funcnameFromNameOff runtime.funcnameFromNameOff
+func funcnameFromNameOff(f funcInfo, nameoff int32) string
 
 //go:linkname funcInfoEntry runtime.funcInfo.entry
 func funcInfoEntry(f funcInfo) PC

@@ -55,11 +55,6 @@ func TestLocationPCsFormat(t *testing.T) {
 
 	assert.Equal(t, "location_stack_test.go:24 at location_stack_test.go:25 at location_stack_test.go:52", fmt.Sprintf("%v", st))
 
-	addAllSubs := ""
-	if regexp.MustCompile("go1.1[^6].*").MatchString(gover()) {
-		addAllSubs = ".1"
-	}
-
 	t.Logf("go version: %q: %q", gover(), addAllSubs)
 
 	assert.Equal(t, "loc.testLocationsInside.func1:24 at loc.testLocationsInside:25 at loc.TestLocationPCsFormat.func1"+addAllSubs+":52", fmt.Sprintf("%#v", st))
@@ -80,22 +75,26 @@ func TestLocationPCsFormatString(t *testing.T) {
 		}()
 	}()
 
-	assert.Equal(t, "location_stack_test.go:24 at location_stack_test.go:25 at location_stack_test.go:79", st.FormatString(""))
-
-	addAllSubs := ""
-	if regexp.MustCompile("go1.1[^6].*").MatchString(gover()) {
-		addAllSubs = ".1"
-	}
+	assert.Equal(t, "location_stack_test.go:24 at location_stack_test.go:25 at location_stack_test.go:74", st.FormatString(""))
 
 	t.Logf("all sub funs suffix (go ver %q): %q", gover(), addAllSubs)
 
-	assert.Equal(t, "loc.testLocationsInside.func1:24 at loc.testLocationsInside:25 at loc.TestLocationPCsFormatString.func1"+addAllSubs+":79", st.FormatString("#"))
+	assert.Equal(t, "loc.testLocationsInside.func1:24 at loc.testLocationsInside:25 at loc.TestLocationPCsFormatString.func1"+addAllSubs+":74", st.FormatString("#"))
 
 	re := `at [\w.-/]*location_stack_test.go:24
 at [\w.-/]*location_stack_test.go:25
-at [\w.-/]*location_stack_test.go:79
+at [\w.-/]*location_stack_test.go:74
 `
 
 	v := st.FormatString("+")
 	assert.True(t, regexp.MustCompile(re).MatchString(v), "expected:\n%vgot:\n%v", re, v)
 }
+
+var addAllSubs = func() string {
+	addAllSubs := ""
+	if regexp.MustCompile("go1.(16|20).*").MatchString(gover()) {
+		addAllSubs = ".1"
+	}
+
+	return addAllSubs
+}()
