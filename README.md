@@ -8,7 +8,7 @@
 
 # loc
 
-It's a fast, allocfree and convinient version of `runtime.Caller`.
+It's a fast, alloc-free and convinient version of `runtime.Caller`. It relies on the internal runtime implementation, which means **the older version of the package may not compile by the future go versions**.
 
 It was born from [tlog](https://github.com/nikandfor/tlog).
 
@@ -22,7 +22,7 @@ ok := pc != 0
 name, file, line := pc.NameFileLine()
 e := pc.FuncEntry()
 
-// result is similar to
+// is similar to
 
 pc, file, line, ok := runtime.Caller(1) 
 f := runtime.FuncForPC(pc)
@@ -42,7 +42,7 @@ for _, pc := range pcs {
     name, file, file := pc.NameFileLine()
 }
 
-// similar to
+// is similar to
 var pcbuf [3]uintptr
 n := runtime.Callers(2, pcbuf[:])
 
