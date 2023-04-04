@@ -1,5 +1,5 @@
-//go:build go1.18 && !go1.20
-// +build go1.18,!go1.20
+//go:build nikandfor_loc_unsafe && go1.18 && !go1.20
+// +build nikandfor_loc_unsafe,go1.18,!go1.20
 
 package loc
 

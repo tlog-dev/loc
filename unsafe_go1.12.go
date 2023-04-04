@@ -1,5 +1,5 @@
-//go:build !go1.13
-// +build !go1.13
+//go:build nikandfor_loc_unsafe && !go1.13
+// +build nikandfor_loc_unsafe,!go1.13
 
 package loc
 

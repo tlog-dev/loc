@@ -33,6 +33,9 @@ func TestLocationZero(t *testing.T) {
 	entry := l.FuncEntry()
 	assert.Equal(t, PC(0), entry)
 
+	entry = PC(100).FuncEntry()
+	assert.Equal(t, PC(0), entry)
+
 	name, file, line := l.NameFileLine()
 	assert.Equal(t, "", name)
 	assert.Equal(t, "", file)

@@ -2,6 +2,7 @@ package loc
 
 import (
 	"reflect"
+	"runtime"
 	"sync"
 	"unsafe"
 )
@@ -26,6 +27,9 @@ func callers(skip int, pc []PC) int
 //go:noescape
 //go:linkname caller1 runtime.callers
 func caller1(skip int, pc *PC, len, cap int) int //nolint:predeclared
+
+//go:linkname callersFrames runtime.CallersFrames
+func callersFrames(pcs PCs) *runtime.Frames
 
 // NameFileLine returns function name, file and line number for location.
 //
