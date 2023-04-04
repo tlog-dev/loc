@@ -19,7 +19,7 @@ var spaces = []byte("                                                           
 
 // String formats PC as base_name.go:line.
 //
-// Works only in the same binary where Caller of Funcentry was called.
+// Works only in the same binary where Caller of FuncEntry was called.
 // Or if PC.SetCache was called.
 func (l PC) String() string {
 	_, file, line := l.NameFileLine()
@@ -260,7 +260,7 @@ func width(v int) (n int) {
 
 // String formats PCs as list of type_name (file.go:line)
 //
-// Works only in the same binary where Caller of Funcentry was called.
+// Works only in the same binary where Caller of FuncEntry was called.
 // Or if PC.SetCache was called.
 func (t PCs) String() string {
 	var b buf
@@ -292,7 +292,7 @@ func (t PCs) String() string {
 
 // FormatString formats PCs as list of type_name (file.go:line)
 //
-// Works only in the same binary where Caller of Funcentry was called.
+// Works only in the same binary where Caller of FuncEntry was called.
 // Or if PC.SetCache was called.
 func (t PCs) FormatString(flags string) string {
 	s := locFmtState{flags: flags}

@@ -30,7 +30,7 @@ func TestLocationShort(t *testing.T) {
 func TestLocation2(t *testing.T) {
 	func() {
 		func() {
-			l := Funcentry(0)
+			l := FuncEntry(0)
 
 			assert.Equal(t, "location_test.go:32", l.String())
 		}()
@@ -53,13 +53,13 @@ func TestLocationOnce(t *testing.T) {
 	//
 	pc = 0
 
-	FuncentryOnce(-1, &pc)
+	FuncEntryOnce(-1, &pc)
 	assert.Equal(t, "location.go:51", pc.String())
 
 	pc++
 	save = pc
 
-	FuncentryOnce(-1, &pc)
+	FuncEntryOnce(-1, &pc)
 
 	assert.Equal(t, save, pc) // not changed
 }

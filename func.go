@@ -40,7 +40,7 @@ const (
 	kindMask        = (1 << 5) - 1
 )
 
-func FuncentryFromFunc(f interface{}) PC {
+func FuncEntryFromFunc(f interface{}) PC {
 	ff := (*fface)(unsafe.Pointer(&f))
 
 	if ff.t == nil {

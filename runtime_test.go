@@ -28,7 +28,7 @@ func TestRuntimeCaller(t *testing.T) {
 
 	assert.Equal(t, f.Entry(), uintptr(pc.FuncEntry()))
 
-	assert.Equal(t, f.Entry(), uintptr(FuncentryFromFunc(TestRuntimeCaller)))
+	assert.Equal(t, f.Entry(), uintptr(FuncEntryFromFunc(TestRuntimeCaller)))
 }
 
 func TestRuntimeCallers(t *testing.T) {

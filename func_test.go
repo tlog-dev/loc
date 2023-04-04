@@ -24,28 +24,28 @@ func TestFuncFunc(t *testing.T) {
 	r = reflect.ValueOf(f)
 	t.Logf("reflect: %v %v %v %x", r.Kind(), r.Type(), r, *(*eface)(unsafe.Pointer(&f)))
 
-	pc := FuncentryFromFunc(TestFuncFunc)
+	pc := FuncEntryFromFunc(TestFuncFunc)
 
 	name, file, line := pc.NameFileLine()
 	t.Logf("pc: %v %v %v", name, file, line)
 
-	assert.Equal(t, Funcentry(0), pc)
+	assert.Equal(t, FuncEntry(0), pc)
 
-	assert.Equal(t, Funcentry(0), PC(reflect.ValueOf(TestFuncFunc).Pointer()))
+	assert.Equal(t, FuncEntry(0), PC(reflect.ValueOf(TestFuncFunc).Pointer()))
 
-	name, file, line = FuncentryFromFunc(nil).NameFileLine()
+	name, file, line = FuncEntryFromFunc(nil).NameFileLine()
 	t.Logf("pc: %v %v %v", name, file, line)
 
 	var q func()
 
-	name, file, line = FuncentryFromFunc(q).NameFileLine()
+	name, file, line = FuncEntryFromFunc(q).NameFileLine()
 	t.Logf("pc: %v %v %v", name, file, line)
 
 	var e PC
 	q = func() {
 		t.Logf("closure func")
 
-		e = Funcentry(0)
+		e = FuncEntry(0)
 	}
 
 	q()
@@ -58,7 +58,7 @@ func TestFuncFunc(t *testing.T) {
 		t.Logf("q out %v", rt.Out(i))
 	}
 
-	pc = FuncentryFromFunc(q)
+	pc = FuncEntryFromFunc(q)
 
 	name, file, line = pc.NameFileLine()
 	t.Logf("pc: %v %v %v", name, file, line)
@@ -66,6 +66,6 @@ func TestFuncFunc(t *testing.T) {
 	assert.Equal(t, e, pc)
 
 	assert.Panics(t, func() {
-		pc = FuncentryFromFunc(3)
+		pc = FuncEntryFromFunc(3)
 	})
 }

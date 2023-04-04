@@ -9,7 +9,7 @@ import (
 
 type (
 	// PC is a program counter alias.
-	// Function name, file name and line can be obtained from it but only in the same binary where Caller or Funcentry was called.
+	// Function name, file name and line can be obtained from it but only in the same binary where Caller or FuncEntry was called.
 	PC uintptr
 
 	// PCs is a stack trace.
@@ -26,10 +26,10 @@ func Caller(s int) (r PC) {
 	return
 }
 
-// Funcentry returns information about the calling goroutine's stack. The argument s is the number of frames to ascend, with 0 identifying the caller of Caller.
+// FuncEntry returns information about the calling goroutine's stack. The argument s is the number of frames to ascend, with 0 identifying the caller of Caller.
 //
 // It's hacked version of runtime.Callers -> runtime.CallersFrames -> Frames.Next -> Frame.Entry with no allocs.
-func Funcentry(s int) (r PC) {
+func FuncEntry(s int) (r PC) {
 	caller1(1+s, &r, 1, 1)
 
 	return r.FuncEntry()
@@ -48,7 +48,7 @@ func CallerOnce(s int, pc *PC) (r PC) {
 	return
 }
 
-func FuncentryOnce(s int, pc *PC) (r PC) {
+func FuncEntryOnce(s int, pc *PC) (r PC) {
 	r = PC(atomic.LoadUintptr((*uintptr)(unsafe.Pointer(pc))))
 	if r != 0 {
 		return
