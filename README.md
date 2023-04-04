@@ -8,7 +8,9 @@
 
 # loc
 
-It's a fast, alloc-free and convinient version of `runtime.Caller`. It relies on the internal runtime implementation, which means **the older version of the package may not compile by the future go versions**.
+It's a fast, alloc-free and convinient version of `runtime.Caller`.
+
+Performance benefits are available when using the `nikandfor_loc_unsafe` build tag. This relies on the internal runtime implementation, which means that older versions of the package may not compile with future versions of Go. Without the tag, it is safe to use with any version of Go.
 
 It was born from [tlog](https://github.com/nikandfor/tlog).
 
