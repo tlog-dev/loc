@@ -6,7 +6,7 @@ jobs:
     steps:
       - run: go version
       - checkout
-      - run: go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
+      - run: go test -tags nikandfor_loc_unsafe -race -coverprofile=coverage.txt -covermode=atomic -v ./...
       - run: bash <(curl -s https://codecov.io/bash)
 
   go1.19: &base_next
@@ -16,7 +16,7 @@ jobs:
     steps:
       - run: go version
       - checkout
-      - run: go test -race -v ./...
+      - run: go test -tags nikandfor_loc_unsafe -race -v ./...
 
   go1.18:
     <<: *base_next
@@ -44,10 +44,24 @@ jobs:
     docker:
       - image: circleci/golang:1.14
 
+  go1.20_safe: &base_safe
+    <<: *base
+    steps:
+      - run: go version
+      - checkout
+      - run: go test -race -cover -v ./...
+
+  go1.19_safe:
+    <<: *base_safe
+    docker:
+      - image: cimg/go:1.19
+
 workflows:
   version: 2
   build:
     jobs:
+      - go1.20_safe
+      - go1.19_safe
       - go1.20
       - go1.19
       - go1.18
