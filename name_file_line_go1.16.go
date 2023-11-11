@@ -1,5 +1,5 @@
-//go:build nikandfor_loc_unsafe && !go1.16
-// +build nikandfor_loc_unsafe,!go1.16
+//go:build nikandfor_loc_unsafe && go1.16 && !go1.17
+// +build nikandfor_loc_unsafe,go1.16,!go1.17
 
 package loc
 
@@ -25,7 +25,7 @@ func (l PC) nameFileLine() (name, file string, line int) {
 
 	name = funcname(funcInfo)
 	if inldata := funcdata(funcInfo, _FUNCDATA_InlTree); inldata != nil {
-		ix := pcdatavalue(funcInfo, _PCDATA_InlTreeIndex, l, nil)
+		ix := pcdatavalue1(funcInfo, _PCDATA_InlTreeIndex, l, nil, false)
 		if ix >= 0 {
 			inltree := (*[1 << 20]inlinedCall)(inldata)
 			// Note: entry is not modified. It always refers to a real frame, not an inlined one.
@@ -53,8 +53,8 @@ func funcname(f funcInfo) string
 //go:linkname funcdata runtime.funcdata
 func funcdata(f funcInfo, i uint8) unsafe.Pointer
 
-//go:linkname pcdatavalue runtime.pcdatavalue
-func pcdatavalue(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer) int32
+//go:linkname pcdatavalue1 runtime.pcdatavalue1
+func pcdatavalue1(f funcInfo, table int32, targetpc PC, cache unsafe.Pointer, strict bool) int32
 
 //go:linkname funcnameFromNameoff runtime.funcnameFromNameoff
 func funcnameFromNameoff(f funcInfo, nameoff int32) string
