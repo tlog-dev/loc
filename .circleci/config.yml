@@ -1,55 +1,60 @@
 version: 2
 jobs:
-  go1.20: &base
+  go1.21: &base
     docker:
-      - image: cimg/go:1.20
-    steps:
-      - run: go version
-      - checkout
-      - run: go test -tags nikandfor_loc_unsafe -race -coverprofile=coverage.txt -covermode=atomic -v ./...
-      - run: bash <(curl -s https://codecov.io/bash)
-
-  go1.19: &base_next
-    <<: *base
-    docker:
-      - image: cimg/go:1.19
+      - image: cimg/go:1.21
     steps:
       - run: go version
       - checkout
       - run: go test -tags nikandfor_loc_unsafe -race -v ./...
 
+  go1.20:
+    <<: *base
+    docker:
+      - image: cimg/go:1.20
+
+  go1.19:
+    <<: *base
+    docker:
+      - image: cimg/go:1.19
+
   go1.18:
-    <<: *base_next
+    <<: *base
     docker:
       - image: cimg/go:1.18
 
   go1.17:
-    <<: *base_next
+    <<: *base
     docker:
       - image: cimg/go:1.17
 
   go1.16:
-    <<: *base_next
+    <<: *base
     docker:
       - image: circleci/golang:1.16
     working_directory: /go/wd
 
   go1.15:
-    <<: *base_next
+    <<: *base
     docker:
       - image: circleci/golang:1.15
 
   go1.14:
-    <<: *base_next
+    <<: *base
     docker:
       - image: circleci/golang:1.14
 
-  go1.20_safe: &base_safe
+  go1.21_safe: &base_safe
     <<: *base
     steps:
       - run: go version
       - checkout
-      - run: go test -race -cover -v ./...
+      - run: go test -race -v ./...
+
+  go1.20_safe:
+    <<: *base_safe
+    docker:
+      - image: cimg/go:1.20
 
   go1.19_safe:
     <<: *base_safe
@@ -65,13 +70,15 @@ workflows:
   version: 2
   build:
     jobs:
+      - go1.21_safe
       - go1.20_safe
       - go1.19_safe
       - go1.18_safe
+      - go1.21
       - go1.20
       - go1.19
       - go1.18
       - go1.17
-      - go1.16
+      #- go1.16 test passes in official docker image (arm64), but not in circleci
       - go1.15
       - go1.14

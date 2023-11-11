@@ -1,5 +1,5 @@
 [![Documentation](https://pkg.go.dev/badge/github.com/nikandfor/loc)](https://pkg.go.dev/github.com/nikandfor/loc?tab=doc)
-[![Build Status](https://travis-ci.com/nikandfor/loc.svg?branch=master)](https://travis-ci.com/nikandfor/loc)
+[![Go workflow](https://github.com/nikandfor/json/actions/workflows/go.yml/badge.svg)](https://github.com/nikandfor/json/actions/workflows/go.yml)
 [![CircleCI](https://circleci.com/gh/nikandfor/loc.svg?style=svg)](https://circleci.com/gh/nikandfor/loc)
 [![codecov](https://codecov.io/gh/nikandfor/loc/tags/latest/graph/badge.svg)](https://codecov.io/gh/nikandfor/loc)
 [![GolangCI](https://golangci.com/badges/github.com/nikandfor/loc.svg)](https://golangci.com/r/github.com/nikandfor/loc)
