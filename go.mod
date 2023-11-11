@@ -1,4 +1,4 @@
-module github.com/nikandfor/loc
+module tlog.app/go/loc
 
 go 1.15
 
