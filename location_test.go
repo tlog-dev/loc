@@ -82,7 +82,8 @@ func TestCaller(t *testing.T) {
 	a, b := Caller(0),
 		Caller(0)
 
-	assert.False(t, a == b, "%x == %x", uintptr(a), uintptr(b))
+	//	assert.False(t, a == b, "%x == %x", uintptr(a), uintptr(b))
+	assert.NotEqual(t, a, b)
 }
 
 func TestSetCache(t *testing.T) {

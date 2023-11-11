@@ -17,25 +17,26 @@ linters-settings:
     min-len: 2
     min-occurrences: 3
   depguard:
-    list-type: whitelist
-    packages:
-      - github.com/beorn7/perks/quantile
-      - github.com/getsentry/sentry-go
-      - github.com/gin-gonic/gin
-      - github.com/nikandfor/cli
-      - github.com/nikandfor/errors
-      - github.com/nikandfor/goid
-      - github.com/nikandfor/loc
-      - github.com/nikandfor/quantile
-      - github.com/nikandfor/tlog
-      - github.com/opentracing/opentracing-go
-      - github.com/prometheus/client_golang
-      - github.com/prometheus/client_model
-      - github.com/stretchr/testify/assert
-      - github.com/stretchr/testify/require
-      - go.opentelemetry.io/otel
-      - golang.org/x
-      - gopkg.in/fsnotify.v1
+    rules:
+      main:
+        allow:
+          - $gostd
+          - github.com/beorn7/perks/quantile
+          - github.com/getsentry/sentry-go
+          - github.com/gin-gonic/gin
+          - github.com/nikandfor/cli
+          - github.com/nikandfor/errors
+          - github.com/nikandfor/goid
+          - github.com/nikandfor/loc
+          - github.com/nikandfor/quantile
+          - github.com/nikandfor/tlog
+          - github.com/opentracing/opentracing-go
+          - github.com/prometheus/client_golang
+          - github.com/prometheus/client_model
+          - github.com/stretchr/testify
+          - go.opentelemetry.io/otel
+          - golang.org/x
+          - gopkg.in/fsnotify.v1
   misspell:
   lll:
     line-length: 170

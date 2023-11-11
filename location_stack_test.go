@@ -118,7 +118,7 @@ func innerFuncName(fn PC, n int) string {
 				s += "."
 			}
 
-			s += fmt.Sprintf("%v", 1)
+			s += "1"
 		}
 	}
 
