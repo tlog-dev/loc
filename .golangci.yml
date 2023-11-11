@@ -3,11 +3,13 @@ run:
 linters-settings:
   govet:
     check-shadowing: false
+  golint:
+    min-confidence: 0
   gocognit:
     min-complexity: 30
   cyclop:
     max-complexity: 30
-  fieldalignment:
+  maligned:
     suggest-new: true
   dupl:
     threshold: 100
@@ -17,12 +19,28 @@ linters-settings:
   depguard:
     list-type: whitelist
     packages:
-      - github.com/stretchr/testify
+      - github.com/beorn7/perks/quantile
+      - github.com/getsentry/sentry-go
+      - github.com/gin-gonic/gin
+      - github.com/nikandfor/cli
+      - github.com/nikandfor/errors
+      - github.com/nikandfor/goid
+      - github.com/nikandfor/loc
+      - github.com/nikandfor/quantile
+      - github.com/nikandfor/tlog
+      - github.com/opentracing/opentracing-go
+      - github.com/prometheus/client_golang
+      - github.com/prometheus/client_model
+      - github.com/stretchr/testify/assert
+      - github.com/stretchr/testify/require
+      - go.opentelemetry.io/otel
+      - golang.org/x
+      - gopkg.in/fsnotify.v1
   misspell:
   lll:
     line-length: 170
   goimports:
-    local-prefixes: github.com/nikandfor/loc
+    local-prefixes: github.com/nikandfor/tlog
   prealloc:
     simple: true
     for-loops: true
@@ -35,25 +53,34 @@ linters-settings:
       - appendAssign
       - builtinShadow
       - commentedOutCode
+      - octalLiteral
+      - sloppyTestFuncName
       - unnamedResult
       - whyNoLint
       - yodaStyleExpr
-      - octalLiteral
 
 linters:
   enable-all: true
   disable:
     - exhaustive
+    - exhaustivestruct
+    - exhaustruct
+    - forcetypeassert
     - funlen
     - gci
     - gochecknoglobals
     - gochecknoinits
     - godox
     - goerr113
+    - golint
     - gomnd
     - nakedret
     - nlreturn
+    - nonamedreturns
+    - paralleltest
     - prealloc
     - testpackage
+    - thelper
     - unparam
+    - varnamelen
     - wsl

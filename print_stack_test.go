@@ -20,7 +20,7 @@ func inline2(t *testing.T) {
 }
 
 func inline3(t *testing.T) {
-	defer func() {
+	defer func() { //nolint:gocritic
 		var pcsbuf [6]PC
 
 		pcs := CallersFill(0, pcsbuf[:])

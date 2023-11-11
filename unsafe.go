@@ -88,7 +88,7 @@ func SetCacheBytes(l PC, name, file []byte, line int) {
 	} else {
 		x := locc[l]
 
-		if x.line != line || string(x.name) != string(name) || string(x.file) != string(file) {
+		if x.line != line || x.name != string(name) || x.file != string(file) {
 			locc[l] = nfl{
 				name: string(name),
 				file: string(file),
@@ -107,7 +107,7 @@ func Cached(l PC) (ok bool) {
 }
 
 func noescapeSlize(b *byte, l int) []byte {
-	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{ //nolint:govet
 		Data: uintptr(unsafe.Pointer(b)),
 		Len:  0,
 		Cap:  l,

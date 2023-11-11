@@ -55,7 +55,7 @@ func TestLocationPCsFormat(t *testing.T) {
 		}()
 	}()
 
-	assert.Equal(t, "location_stack_test.go:26 at location_stack_test.go:27 at location_stack_test.go:54", fmt.Sprintf("%v", st))
+	assert.Equal(t, "location_stack_test.go:26 at location_stack_test.go:27 at location_stack_test.go:54", st.String())
 
 	addAllSubs := innerFuncName(Caller(0), 2)
 	t.Logf("go version: %q: %q", gover(), addAllSubs)

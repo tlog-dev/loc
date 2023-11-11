@@ -5,7 +5,6 @@ package loc
 
 import (
 	"runtime"
-	_ "unsafe"
 )
 
 func (l PC) nameFileLine() (name, file string, line int) {
