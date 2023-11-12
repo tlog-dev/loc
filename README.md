@@ -1,8 +1,8 @@
-[![Documentation](https://pkg.go.dev/badge/github.com/tlog-dev/loc)](https://pkg.go.dev/github.com/tlog-dev/loc?tab=doc)
+[![Documentation](https://pkg.go.dev/badge/tlog.app/go/loc)](https://pkg.go.dev/tlog.app/go/loc?tab=doc)
 [![Go workflow](https://github.com/tlog-dev/loc/actions/workflows/go.yml/badge.svg)](https://github.com/tlog-dev/loc/actions/workflows/go.yml)
 [![CircleCI](https://circleci.com/gh/tlog-dev/loc.svg?style=svg)](https://circleci.com/gh/tlog-dev/loc)
 [![codecov](https://codecov.io/gh/tlog-dev/loc/tags/latest/graph/badge.svg)](https://codecov.io/gh/tlog-dev/loc)
-[![Go Report Card](https://goreportcard.com/badge/github.com/tlog-dev/loc)](https://goreportcard.com/report/github.com/tlog-dev/loc)
+[![Go Report Card](https://goreportcard.com/badge/tlog.app/go/loc)](https://goreportcard.com/report/tlog.app/go/loc)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/tlog-dev/loc?sort=semver)
 
 # loc
