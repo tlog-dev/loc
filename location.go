@@ -83,10 +83,10 @@ func CallersFill(skip int, tr PCs) PCs {
 func cropFilename(fn, tp string) string {
 	p := strings.LastIndexByte(tp, '/')
 	pp := strings.IndexByte(tp[p+1:], '.')
-	tp = tp[:p+pp]
+	tp = tp[:p+pp] // cut type and func name
 
 	for {
-		if p = strings.Index(fn, tp); p != -1 {
+		if p = strings.LastIndex(fn, tp); p != -1 {
 			return fn[p:]
 		}
 

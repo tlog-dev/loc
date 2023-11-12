@@ -76,6 +76,8 @@ func TestLocationCropFileName(t *testing.T) {
 	assert.Equal(t, "root.go", cropFilename("/path/to/src/root.go", "tlog.method"))
 	assert.Equal(t, "subpkg/file.go", cropFilename("/path/to/src/subpkg/file.go", "subpkg.method"))
 	assert.Equal(t, "subpkg/file.go", cropFilename("/path/to/src/subpkg/file.go", "github.com/nikandfor/tlog/subpkg.(*type).method"))
+	assert.Equal(t, "errors/fmt_test.go",
+		cropFilename("/home/runner/work/errors/errors/fmt_test.go", "tlog.app/go/error.TestErrorFormatCaller"))
 }
 
 func TestCaller(t *testing.T) {
