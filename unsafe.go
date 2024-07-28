@@ -1,6 +1,6 @@
 package loc
 
-import _ "unsafe"
+import _ "unsafe" // for linkname
 
 //go:noescape
 //go:linkname callers runtime.callers

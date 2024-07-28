@@ -308,14 +308,14 @@ func (t PCs) Format(s fmt.State, c rune) {
 	switch {
 	case s.Flag('+'):
 		for _, l := range t {
-			s.Write([]byte("at "))
+			_, _ = s.Write([]byte("at "))
 			l.Format(s, c)
-			s.Write([]byte("\n"))
+			_, _ = s.Write([]byte("\n"))
 		}
 	default:
 		for i, l := range t {
 			if i != 0 {
-				s.Write([]byte(" at "))
+				_, _ = s.Write([]byte(" at "))
 			}
 			l.Format(s, c)
 		}

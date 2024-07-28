@@ -2,13 +2,13 @@ package loc
 
 import (
 	"fmt"
-	"path"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// align line numbers for tests
 
 func TestLocationFillCallers(t *testing.T) {
 	st := make(PCs, 1)
@@ -94,35 +94,4 @@ at [\w.-/]*location_stack_test.go:78
 
 	v := st.FormatString("+")
 	assert.True(t, regexp.MustCompile(re).MatchString(v), "expected:\n%vgot:\n%v", re, v)
-}
-
-func innerFuncName(fn PC, n int) string {
-	var s string
-
-	switch {
-	//	case regexp.MustCompile("go1.16.*").MatchString(gover()):
-	//		return ".func1"
-	case regexp.MustCompile("go1.21.*").MatchString(gover()):
-		name, _, _ := fn.NameFileLine()
-		name = path.Base(name)
-		name = name[strings.IndexByte(name, '.')+1:]
-
-		s = "." + name
-
-		for i := 0; i < n; i++ {
-			s += fmt.Sprintf(".func%v", i+1)
-		}
-	default:
-		s = ".func"
-
-		for i := 0; i < n; i++ {
-			if i != 0 {
-				s += "."
-			}
-
-			s += "1"
-		}
-	}
-
-	return s
 }

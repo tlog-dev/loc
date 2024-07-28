@@ -55,7 +55,6 @@ linters-settings:
       - builtinShadow
       - commentedOutCode
       - octalLiteral
-      - sloppyTestFuncName
       - unnamedResult
       - whyNoLint
       - yodaStyleExpr
@@ -72,9 +71,10 @@ linters:
     - gochecknoglobals
     - gochecknoinits
     - godox
-    - goerr113
+    - err113
     - golint
     - gomnd
+    - mnd
     - nakedret
     - nlreturn
     - nonamedreturns
