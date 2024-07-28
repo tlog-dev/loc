@@ -20,6 +20,7 @@ func (l PC) FuncEntry() PC {
 	return PC(f.Entry)
 }
 
+//go:nocheckptr
 func (l PC) frame() runtimeFrame {
 	fs0 := &runtimeFrames{}
 
@@ -31,8 +32,7 @@ func (l PC) frame() runtimeFrame {
 	fs.len = 1
 	fs.frames = fs.frameStore[:0]
 
-	x = (uintptr)(unsafe.Pointer(fs))
-	r := (*runtime.Frames)(unsafe.Pointer(x ^ 0))
+	r := (*runtime.Frames)(unsafe.Pointer(fs))
 
 	f, _ := r.Next()
 
