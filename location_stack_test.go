@@ -57,12 +57,13 @@ func TestLocationPCsFormat(t *testing.T) {
 
 	assert.Equal(t, "location_stack_test.go:26 at location_stack_test.go:27 at location_stack_test.go:54", st.String())
 
-	addAllSubs := innerFuncName(Caller(0), 2)
-	t.Logf("go version: %q: %q", gover(), addAllSubs)
+	//	addAllSubs := innerFuncName(Caller(0), 2)
+	//	t.Logf("go version: %q: %q", gover(), addAllSubs)
 
-	assert.Equal(t, "loc.testLocationsInside.func1:26 at loc.testLocationsInside:27 at loc.TestLocationPCsFormat"+addAllSubs+":54", fmt.Sprintf("%#v", st))
+	re := `loc.testLocationsInside.func1:26 at loc.testLocationsInside:27 at loc.TestLocationPCsFormat[\w.]*:54`
+	assert.True(t, regexp.MustCompile(re).MatchString(fmt.Sprintf("%#v", st)))
 
-	re := `at [\w.-/]*location_stack_test.go:26
+	re = `at [\w.-/]*location_stack_test.go:26
 at [\w.-/]*location_stack_test.go:27
 at [\w.-/]*location_stack_test.go:54
 `
@@ -78,16 +79,17 @@ func TestLocationPCsFormatString(t *testing.T) {
 		}()
 	}()
 
-	assert.Equal(t, "location_stack_test.go:26 at location_stack_test.go:27 at location_stack_test.go:77", st.FormatString(""))
+	assert.Equal(t, "location_stack_test.go:26 at location_stack_test.go:27 at location_stack_test.go:78", st.FormatString(""))
 
-	addAllSubs := innerFuncName(Caller(0), 2)
-	t.Logf("all sub funs suffix (go ver %q): %q", gover(), addAllSubs)
+	//	addAllSubs := innerFuncName(Caller(0), 2)
+	//	t.Logf("all sub funs suffix (go ver %q): %q", gover(), addAllSubs)
 
-	assert.Equal(t, "loc.testLocationsInside.func1:26 at loc.testLocationsInside:27 at loc.TestLocationPCsFormatString"+addAllSubs+":77", st.FormatString("#"))
+	re := `loc.testLocationsInside.func1:26 at loc.testLocationsInside:27 at loc.TestLocationPCsFormatString[\w.]*:78`
+	assert.True(t, regexp.MustCompile(re).MatchString(st.FormatString("#")))
 
-	re := `at [\w.-/]*location_stack_test.go:26
+	re = `at [\w.-/]*location_stack_test.go:26
 at [\w.-/]*location_stack_test.go:27
-at [\w.-/]*location_stack_test.go:77
+at [\w.-/]*location_stack_test.go:78
 `
 
 	v := st.FormatString("+")

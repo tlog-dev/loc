@@ -8,7 +8,7 @@ import (
 )
 
 func (l PC) nameFileLine() (name, file string, line int) {
-	fs := callersFrames(PCs{l})
+	fs := runtime.CallersFrames([]uintptr{uintptr(l)})
 	f, _ := fs.Next()
 	return f.Function, f.File, f.Line
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
+	"reflect"
+	"unsafe"
 )
 
 type (
@@ -338,3 +340,11 @@ func (b *buf) Write(p []byte) (int, error) {
 
 func (s *locFmtState) Width() (int, bool)     { return 0, false }
 func (s *locFmtState) Precision() (int, bool) { return 0, false }
+
+func noescapeSlize(b *byte, l int) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{ //nolint:govet
+		Data: uintptr(unsafe.Pointer(b)),
+		Len:  0,
+		Cap:  l,
+	}))
+}
