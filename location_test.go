@@ -3,10 +3,16 @@ package loc
 import (
 	"path"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// padding
+// padding
+// padding
 
 func TestLocation(t *testing.T) {
 	testLocationInside(t)
@@ -19,12 +25,12 @@ func testLocationInside(t *testing.T) {
 	name, file, line := pc.NameFileLine()
 	assert.Equal(t, "loc.testLocationInside", path.Base(name))
 	assert.Equal(t, "location_test.go", filepath.Base(file))
-	assert.Equal(t, 18, line)
+	assert.Equal(t, 24, line)
 }
 
 func TestLocationShort(t *testing.T) {
 	pc := Caller(0)
-	assert.Equal(t, "location_test.go:26", pc.String())
+	assert.Equal(t, "location_test.go:32", pc.String())
 }
 
 func TestLocation2(t *testing.T) {
@@ -32,7 +38,13 @@ func TestLocation2(t *testing.T) {
 		func() {
 			l := FuncEntry(0)
 
-			assert.Equal(t, "location_test.go:32", l.String())
+			ver := runtime.Version()
+			exp := "location_test.go:38"
+			if strings.HasPrefix(ver, "go1.24") {
+				exp = "location_test.go:36"
+			}
+
+			assert.Equal(t, exp, l.String(), "ver: %v", ver)
 		}()
 	}()
 }

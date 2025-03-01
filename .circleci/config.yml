@@ -1,13 +1,18 @@
 version: 2
 jobs:
-  go1.23: &base
+  go1.24: &base
     docker:
-      - image: cimg/go:1.23
+      - image: cimg/go:1.24
     steps:
       - run: go version
       - checkout
       - run: go test -tags nikandfor_loc_unsafe -v ./...
       - run: go test -tags nikandfor_loc_unsafe -v -race ./...
+
+  go1.23:
+    <<: *base
+    docker:
+      - image: cimg/go:1.23
 
   go1.22:
     <<: *base
@@ -34,21 +39,21 @@ jobs:
     docker:
       - image: cimg/go:1.18
 
-  go1.17:
+
+  go1.24_safe: &base_safe
     <<: *base
     docker:
-      - image: cimg/go:1.17
-
-
-  go1.23_safe: &base_safe
-    <<: *base
-    docker:
-      - image: cimg/go:1.23
+      - image: cimg/go:1.24
     steps:
       - run: go version
       - checkout
       - run: go test -v -race ./...
       - run: go test -v ./...
+
+  go1.23_safe:
+    <<: *base_safe
+    docker:
+      - image: cimg/go:1.23
 
   go1.22_safe:
     <<: *base_safe
@@ -70,25 +75,20 @@ jobs:
     docker:
       - image: cimg/go:1.19
 
-  go1.18_safe:
-    <<: *base_safe
-    docker:
-      - image: cimg/go:1.18
-
 workflows:
   version: 2
   build:
     jobs:
+      - go1.24_safe
       - go1.23_safe
       - go1.22_safe
       - go1.21_safe
       - go1.20_safe
       - go1.19_safe
-      - go1.18_safe
+      - go1.24
       - go1.23
       - go1.22
       - go1.21
       - go1.20
       - go1.19
       - go1.18
-      - go1.17
